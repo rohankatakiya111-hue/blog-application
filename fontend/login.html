@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login - BlogVerse</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <nav>
+      <div class="logo">
+        <a href="index.html"> 📝 BlogVerse </a>
+      </div>
+
+      <div class="nav-links">
+        <a href="index.html"> Home </a>
+
+        <a href="login.html"> Login </a>
+
+        <a href="register.html"> Register </a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="form-card login-card">
+        <div class="card-icon login-icon">🔐</div>
+
+        <h2>Welcome Back</h2>
+
+        <p class="form-subtitle">Login to continue to BlogVerse</p>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email"> E-MAIL ADDRESS </label>
+
+            <input
+              type="email"
+              id="email"
+              required
+              placeholder="name@example.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password"> PASSWORD </label>
+
+            <input
+              type="password"
+              id="password"
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <button type="submit" class="btn login-btn">🔑 SIGN IN</button>
+        </form>
+
+        <div class="form-footer">
+          <p>
+            Don't have an account?
+            <a href="register.html"> Create Account </a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <h3>📝 BlogVerse</h3>
+
+        <p>Write. Share. Inspire.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="index.html"> Home </a>
+
+        <a href="register.html"> Register </a>
+      </div>
+
+      <p class="copyright">© 2026 BlogVerse. Internship Project.</p>
+    </footer>
+
+    <script src="main.js"></script>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const email = document.getElementById("email").value.trim();
+
+          const password = document.getElementById("password").value;
+
+          console.log("Login button clicked");
+
+          try {
+            const response = await fetch(
+              "http://localhost:5000/api/auth/login",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type": "application/json",
+                },
+
+                body: JSON.stringify({
+                  email: email,
+                  password: password,
+                }),
+              },
+            );
+
+            const data = await response.json();
+
+            console.log("Backend response:", data);
+
+            if (response.ok) {
+              alert("Login successful!");
+
+              localStorage.setItem("user", JSON.stringify(data.user));
+
+              window.location.href = "dashboard.html";
+            } else {
+              alert(data.message || "Invalid email or password");
+            }
+          } catch (error) {
+            console.error("Login Error:", error);
+
+            alert("Server sathe connect thai shakyu nahi!");
+          }
+        });
+    </script>
+  </body>
+</html>

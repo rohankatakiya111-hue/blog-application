@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Create Blog - BlogVerse</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <nav>
+      <div class="logo">
+        <a href="index.html"> 📝 BlogVerse </a>
+      </div>
+
+      <div class="nav-links">
+        <a href="dashboard.html"> Dashboard </a>
+
+        <a href="index.html"> Home </a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="form-card create-blog-card">
+        <div class="card-icon create-icon">✍️</div>
+
+        <h2>Write a New Article</h2>
+
+        <p class="form-subtitle">
+          Share your knowledge, ideas and experiences with the BlogVerse
+          community.
+        </p>
+
+        <form id="blogForm">
+          <div class="form-group">
+            <label for="title"> BLOG TITLE </label>
+
+            <input
+              type="text"
+              id="title"
+              required
+              placeholder="Enter an interesting blog title..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="content"> CONTENT </label>
+
+            <textarea
+              id="content"
+              rows="12"
+              required
+              placeholder="Start writing your blog here..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="author"> AUTHOR </label>
+
+            <input
+              type="text"
+              id="author"
+              required
+              placeholder="Enter author name..."
+            />
+          </div>
+
+          <div class="create-actions">
+            <a href="dashboard.html" class="btn cancel-btn"> ← Cancel </a>
+
+            <button type="submit" class="btn publish-btn">
+              🚀 Publish Blog
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <h3>📝 BlogVerse</h3>
+
+        <p>Write. Share. Inspire.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="index.html"> Home </a>
+
+        <a href="dashboard.html"> Dashboard </a>
+      </div>
+
+      <p class="copyright">© 2026 BlogVerse. Internship Project.</p>
+    </footer>
+
+    <script src="main.js"></script>
+
+    <script>
+      document
+        .getElementById("blogForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const title = document.getElementById("title").value.trim();
+
+          const content = document.getElementById("content").value.trim();
+
+          const author = document.getElementById("author").value.trim();
+
+          console.log("Publish button clicked");
+
+          try {
+            const response = await fetch("http://localhost:5000/api/blogs", {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+              },
+
+              body: JSON.stringify({
+                title: title,
+                content: content,
+                author: author,
+              }),
+            });
+
+            const data = await response.json();
+
+            console.log("Blog response:", data);
+
+            if (response.ok) {
+              alert("Blog created successfully!");
+
+              window.location.href = "dashboard.html";
+            } else {
+              alert(data.message || "Blog create failed!");
+            }
+          } catch (error) {
+            console.error("Blog Error:", error);
+
+            alert("Server sathe connect thai shakyu nahi!");
+          }
+        });
+    </script>
+  </body>
+</html>
