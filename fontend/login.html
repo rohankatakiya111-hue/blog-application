@@ -13,15 +13,13 @@
   <body>
     <nav>
       <div class="logo">
-        <a href="index.html"> 📝 BlogVerse </a>
+        <a href="index.html">📝 BlogVerse</a>
       </div>
 
       <div class="nav-links">
-        <a href="index.html"> Home </a>
-
-        <a href="login.html"> Login </a>
-
-        <a href="register.html"> Register </a>
+        <a href="index.html">Home</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
       </div>
     </nav>
 
@@ -35,7 +33,7 @@
 
         <form id="loginForm">
           <div class="form-group">
-            <label for="email"> E-MAIL ADDRESS </label>
+            <label for="email">E-MAIL ADDRESS</label>
 
             <input
               type="email"
@@ -46,7 +44,7 @@
           </div>
 
           <div class="form-group">
-            <label for="password"> PASSWORD </label>
+            <label for="password">PASSWORD</label>
 
             <input
               type="password"
@@ -62,7 +60,7 @@
         <div class="form-footer">
           <p>
             Don't have an account?
-            <a href="register.html"> Create Account </a>
+            <a href="register.html">Create Account</a>
           </p>
         </div>
       </div>
@@ -71,20 +69,16 @@
     <footer>
       <div>
         <h3>📝 BlogVerse</h3>
-
         <p>Write. Share. Inspire.</p>
       </div>
 
       <div class="footer-links">
-        <a href="index.html"> Home </a>
-
-        <a href="register.html"> Register </a>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
       </div>
 
       <p class="copyright">© 2026 BlogVerse. Internship Project.</p>
     </footer>
-
-    <script src="main.js"></script>
 
     <script>
       document
@@ -122,7 +116,14 @@
             if (response.ok) {
               alert("Login successful!");
 
+              // Save JWT token
+              localStorage.setItem("token", data.token);
+
+              // Save logged-in user
               localStorage.setItem("user", JSON.stringify(data.user));
+
+              console.log("JWT token saved:", data.token);
+              console.log("User saved:", data.user);
 
               window.location.href = "dashboard.html";
             } else {

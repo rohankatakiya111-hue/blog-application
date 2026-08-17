@@ -1,23 +1,22 @@
 const Blog = require("../models/Blog");
 
-// ===============================
-// CREATE BLOG
-// ===============================
-
 const createBlog = async (req, res) => {
   try {
     const { title, content, author } = req.body;
 
-    if (!title || !content || !author) {
+    if (!title || !content) {
       return res.status(400).json({
-        message: "Please fill all fields",
+        message: "Title and content are required",
       });
     }
 
     const blog = await Blog.create({
       title,
       content,
-      author,
+      author: author || req.user.name || req.user.email,
+
+      // Logged-in user's ID
+      user: req.user.id,
     });
 
     res.status(201).json({
@@ -25,42 +24,43 @@ const createBlog = async (req, res) => {
       blog,
     });
   } catch (error) {
+    console.error("Create Blog Error:", error);
+
     res.status(500).json({
       message: "Server error",
       error: error.message,
     });
   }
 };
-
-// ===============================
-// GET ALL BLOGS
-// ===============================
 
 const getBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
+    const blogs = await Blog.find({
+      user: req.user.id,
+    }).sort({ createdAt: -1 });
 
     res.status(200).json({
-      message: "Blogs fetched successfully",
+      message: "User blogs fetched successfully",
       blogs,
     });
   } catch (error) {
+    console.error("Get Blogs Error:", error);
+
     res.status(500).json({
       message: "Server error",
       error: error.message,
     });
   }
 };
-
-// ===============================
-// GET SINGLE BLOG
-// ===============================
 
 const getBlogById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const blog = await Blog.findById(id);
+    const blog = await Blog.findOne({
+      _id: id,
+      user: req.user.id,
+    });
 
     if (!blog) {
       return res.status(404).json({
@@ -73,6 +73,8 @@ const getBlogById = async (req, res) => {
       blog,
     });
   } catch (error) {
+    console.error("Get Blog Error:", error);
+
     res.status(500).json({
       message: "Server error",
       error: error.message,
@@ -80,19 +82,18 @@ const getBlogById = async (req, res) => {
   }
 };
 
-// ===============================
-// DELETE BLOG
-// ===============================
-
 const deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const blog = await Blog.findByIdAndDelete(id);
+    const blog = await Blog.findOneAndDelete({
+      _id: id,
+      user: req.user.id,
+    });
 
     if (!blog) {
       return res.status(404).json({
-        message: "Blog not found",
+        message: "Blog not found or you are not authorized",
       });
     }
 
@@ -100,6 +101,8 @@ const deleteBlog = async (req, res) => {
       message: "Blog deleted successfully",
     });
   } catch (error) {
+    console.error("Delete Blog Error:", error);
+
     res.status(500).json({
       message: "Server error",
       error: error.message,
@@ -107,13 +110,10 @@ const deleteBlog = async (req, res) => {
   }
 };
 
-// ===============================
-// UPDATE BLOG
-// ===============================
-
 const updateBlog = async (req, res) => {
   try {
     const { id } = req.params;
+
     const { title, content } = req.body;
 
     if (!title || !content) {
@@ -122,8 +122,11 @@ const updateBlog = async (req, res) => {
       });
     }
 
-    const blog = await Blog.findByIdAndUpdate(
-      id,
+    const blog = await Blog.findOneAndUpdate(
+      {
+        _id: id,
+        user: req.user.id,
+      },
       {
         title,
         content,
@@ -135,7 +138,7 @@ const updateBlog = async (req, res) => {
 
     if (!blog) {
       return res.status(404).json({
-        message: "Blog not found",
+        message: "Blog not found or you are not authorized",
       });
     }
 
@@ -144,16 +147,14 @@ const updateBlog = async (req, res) => {
       blog,
     });
   } catch (error) {
+    console.error("Update Blog Error:", error);
+
     res.status(500).json({
       message: "Server error",
       error: error.message,
     });
   }
 };
-
-// ===============================
-// EXPORT FUNCTIONS
-// ===============================
 
 module.exports = {
   createBlog,

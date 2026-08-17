@@ -1,7 +1,11 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
+// ===============================
 // REGISTER USER
+// ===============================
+
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -44,7 +48,10 @@ const registerUser = async (req, res) => {
   }
 };
 
+// ===============================
 // LOGIN USER
+// ===============================
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -71,13 +78,35 @@ const loginUser = async (req, res) => {
       });
     }
 
+    // ===============================
+    // CREATE JWT TOKEN
+    // ===============================
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+
+    // ===============================
+    // LOGIN RESPONSE
+    // ===============================
+
     res.status(200).json({
       message: "Login successful",
+
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
       },
+
+      token,
     });
   } catch (error) {
     res.status(500).json({
@@ -86,6 +115,10 @@ const loginUser = async (req, res) => {
     });
   }
 };
+
+// ===============================
+// EXPORT FUNCTIONS
+// ===============================
 
 module.exports = {
   registerUser,

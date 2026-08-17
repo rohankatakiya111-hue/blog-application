@@ -36,10 +36,6 @@
   </head>
 
   <body>
-    <!-- =============================== -->
-    <!-- NAVBAR -->
-    <!-- =============================== -->
-
     <nav>
       <div class="logo">
         <a href="index.html">📝 BlogVerse</a>
@@ -52,13 +48,9 @@
 
         <a href="create-blog.html" class="btn nav-create-btn"> + New Blog </a>
 
-        <a href="index.html">Logout</a>
+        <a href="#" onclick="logout()">Logout</a>
       </div>
     </nav>
-
-    <!-- =============================== -->
-    <!-- DASHBOARD -->
-    <!-- =============================== -->
 
     <div class="container dashboard-container">
       <div class="dashboard-header">
@@ -77,8 +69,6 @@
         </a>
       </div>
 
-      <!-- BLOG GRID -->
-
       <div id="blogGrid" class="blog-grid">
         <div class="loading-card">
           <div class="loading-icon">⏳</div>
@@ -90,10 +80,6 @@
       </div>
     </div>
 
-    <!-- =============================== -->
-    <!-- FOOTER -->
-    <!-- =============================== -->
-
     <footer>
       <div>
         <h3>📝 BlogVerse</h3>
@@ -102,78 +88,84 @@
       </div>
 
       <div class="footer-links">
-        <a href="index.html"> Home </a>
+        <a href="index.html">Home</a>
 
-        <a href="create-blog.html"> New Blog </a>
+        <a href="create-blog.html">New Blog</a>
       </div>
 
       <p class="copyright">© 2026 BlogVerse. Internship Project.</p>
     </footer>
 
-    <!-- =============================== -->
-    <!-- JAVASCRIPT -->
-    <!-- =============================== -->
-
     <script>
-      // Backend API URL
+      // ==========================================
+      // CHECK LOGIN
+      // ==========================================
+
+      const token = localStorage.getItem("token");
+
+      const user = localStorage.getItem("user");
+
+      if (!token || !user) {
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+      }
+
+      // ==========================================
+      // API URL
+      // ==========================================
+
       const API_URL = "http://localhost:5000/api/blogs";
 
-      // ===============================
-      // LOAD ALL BLOGS
-      // ===============================
+      // ==========================================
+      // LOAD BLOGS
+      // ==========================================
 
       async function loadBlogs() {
         const blogGrid = document.getElementById("blogGrid");
 
         try {
-          const response = await fetch(API_URL);
+          const response = await fetch(API_URL, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
           const data = await response.json();
 
-          // API ERROR
-
           if (!response.ok) {
+            if (response.status === 401) {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+
+              alert("Session expired. Please login again.");
+
+              window.location.href = "login.html";
+
+              return;
+            }
+
             blogGrid.innerHTML = `
-
               <div class="empty-card">
+                <div class="empty-icon">⚠️</div>
 
-                <div class="empty-icon">
-                  ⚠️
-                </div>
+                <h3>Unable to load blogs</h3>
 
-                <h3>
-                  Unable to load blogs
-                </h3>
-
-                <p>
-                  Blogs load nahi thai shakya.
-                </p>
-
+                <p>Blogs load nahi thai shakya.</p>
               </div>
-
             `;
 
             return;
           }
 
-          // NO BLOGS
-
           if (!data.blogs || data.blogs.length === 0) {
             blogGrid.innerHTML = `
-
               <div class="empty-card">
+                <div class="empty-icon">📝</div>
 
-                <div class="empty-icon">
-                  📝
-                </div>
+                <h3>No Blogs Yet</h3>
 
-                <h3>
-                  No Blogs Yet
-                </h3>
-
-                <p>
-                  Haju koi blog available nathi.
-                </p>
+                <p>Haju koi blog available nathi.</p>
 
                 <a
                   href="create-blog.html"
@@ -181,19 +173,13 @@
                 >
                   ✍️ Create Your First Blog
                 </a>
-
               </div>
-
             `;
 
             return;
           }
 
-          // CLEAR LOADING
-
           blogGrid.innerHTML = "";
-
-          // DISPLAY BLOGS
 
           data.blogs.forEach(function (blog) {
             const blogCard = document.createElement("div");
@@ -203,9 +189,7 @@
             const date = new Date(blog.createdAt).toLocaleDateString();
 
             blogCard.innerHTML = `
-
               <div class="blog-card-top">
-
                 <span class="blog-badge">
                   Published
                 </span>
@@ -213,57 +197,34 @@
                 <span class="blog-date">
                   ${date}
                 </span>
-
               </div>
-
-
-              <!-- BLOG TITLE -->
 
               <a
                 href="blog-details.html?id=${blog._id}"
                 class="blog-view-link"
               >
-
                 <h3>
                   ${escapeHtml(blog.title)}
                 </h3>
-
               </a>
-
-
-              <!-- BLOG CONTENT -->
 
               <p class="blog-content">
                 ${escapeHtml(blog.content)}
               </p>
 
-
-              <!-- AUTHOR -->
-
               <div class="blog-author">
-
                 <div class="author-avatar">
-
                   ${escapeHtml(blog.author.charAt(0).toUpperCase())}
-
                 </div>
 
                 <div>
-
-                  <small>
-                    Written by
-                  </small>
+                  <small>Written by</small>
 
                   <strong>
                     ${escapeHtml(blog.author)}
                   </strong>
-
                 </div>
-
               </div>
-
-
-              <!-- VIEW BLOG -->
 
               <a
                 href="blog-details.html?id=${blog._id}"
@@ -272,11 +233,7 @@
                 📖 Read Full Blog
               </a>
 
-
-              <!-- ACTION BUTTONS -->
-
               <div class="blog-actions">
-
                 <button
                   class="btn edit-btn"
                   onclick="editBlog(
@@ -288,7 +245,6 @@
                   ✏️ Edit
                 </button>
 
-
                 <button
                   class="btn delete-btn"
                   onclick="deleteBlog(
@@ -297,9 +253,7 @@
                 >
                   🗑️ Delete
                 </button>
-
               </div>
-
             `;
 
             blogGrid.appendChild(blogCard);
@@ -308,46 +262,35 @@
           console.error("Error loading blogs:", error);
 
           blogGrid.innerHTML = `
-
             <div class="empty-card">
+              <div class="empty-icon">⚠️</div>
 
-              <div class="empty-icon">
-                ⚠️
-              </div>
-
-              <h3>
-                Backend Connection Error
-              </h3>
+              <h3>Backend Connection Error</h3>
 
               <p>
-                Backend server sathe
-                connect thai shakyu nahi.
+                Backend server sathe connect
+                thai shakyu nahi.
               </p>
-
             </div>
-
           `;
         }
       }
 
-      // ===============================
+      // ==========================================
       // ESCAPE TEXT
-      // ===============================
+      // ==========================================
 
       function escapeText(text) {
         return String(text)
           .replace(/\\/g, "\\\\")
-
           .replace(/'/g, "\\'")
-
           .replace(/\n/g, "\\n")
-
           .replace(/\r/g, "");
       }
 
-      // ===============================
+      // ==========================================
       // ESCAPE HTML
-      // ===============================
+      // ==========================================
 
       function escapeHtml(text) {
         const div = document.createElement("div");
@@ -357,9 +300,9 @@
         return div.innerHTML;
       }
 
-      // ===============================
+      // ==========================================
       // EDIT BLOG
-      // ===============================
+      // ==========================================
 
       async function editBlog(id, oldTitle, oldContent) {
         const newTitle = prompt("Enter new blog title:", oldTitle);
@@ -380,6 +323,8 @@
 
             headers: {
               "Content-Type": "application/json",
+
+              Authorization: `Bearer ${token}`,
             },
 
             body: JSON.stringify({
@@ -405,9 +350,9 @@
         }
       }
 
-      // ===============================
+      // ==========================================
       // DELETE BLOG
-      // ===============================
+      // ==========================================
 
       async function deleteBlog(id) {
         const confirmDelete = confirm(
@@ -421,6 +366,10 @@
         try {
           const response = await fetch(`${API_URL}/${id}`, {
             method: "DELETE",
+
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           const data = await response.json();
@@ -439,11 +388,27 @@
         }
       }
 
-      // ===============================
-      // START
-      // ===============================
+      // ==========================================
+      // LOGOUT
+      // ==========================================
 
-      loadBlogs();
+      function logout() {
+        localStorage.removeItem("token");
+
+        localStorage.removeItem("user");
+
+        alert("Logout successful!");
+
+        window.location.href = "login.html";
+      }
+
+      // ==========================================
+      // START
+      // ==========================================
+
+      if (token && user) {
+        loadBlogs();
+      }
     </script>
   </body>
 </html>

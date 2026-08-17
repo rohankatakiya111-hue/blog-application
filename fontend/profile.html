@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Profile - BlogVerse</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <nav>
+      <div class="logo">
+        <a href="index.html">📝 BlogVerse</a>
+      </div>
+
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="create-blog.html">+ New Blog</a>
+
+        <a href="#" onclick="logout()">Logout</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="form-card">
+        <div class="card-icon">👤</div>
+
+        <h2>My Profile</h2>
+
+        <p class="form-subtitle">Your BlogVerse account information</p>
+
+        <div class="form-group">
+          <label>NAME</label>
+
+          <input type="text" id="profileName" readonly />
+        </div>
+
+        <div class="form-group">
+          <label>E-MAIL ADDRESS</label>
+
+          <input type="email" id="profileEmail" readonly />
+        </div>
+
+        <div class="create-actions">
+          <a href="dashboard.html" class="btn cancel-btn"> ← Dashboard </a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <h3>📝 BlogVerse</h3>
+
+        <p>Write. Share. Inspire.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+
+      <p class="copyright">© 2026 BlogVerse. Internship Project.</p>
+    </footer>
+
+    <script>
+      const token = localStorage.getItem("token");
+
+      const userData = localStorage.getItem("user");
+
+      if (!token || !userData) {
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+      }
+
+      try {
+        const user = JSON.parse(userData);
+
+        document.getElementById("profileName").value = user.name || "";
+
+        document.getElementById("profileEmail").value = user.email || "";
+      } catch (error) {
+        console.error("Profile Error:", error);
+
+        localStorage.removeItem("token");
+
+        localStorage.removeItem("user");
+
+        window.location.href = "login.html";
+      }
+
+      function logout() {
+        localStorage.removeItem("token");
+
+        localStorage.removeItem("user");
+
+        alert("Logout successful!");
+
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>

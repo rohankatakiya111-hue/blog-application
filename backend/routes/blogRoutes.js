@@ -8,21 +8,18 @@ const {
   updateBlog,
 } = require("../controllers/blogController");
 
+const protect = require("../middleware/authMiddleware");
+
 const router = express.Router();
 
-// Create Blog
-router.post("/", createBlog);
+router.post("/", protect, createBlog);
 
-// Get All Blogs
-router.get("/", getBlogs);
+router.get("/", protect, getBlogs);
 
-// Get Single Blog
-router.get("/:id", getBlogById);
+router.get("/:id", protect, getBlogById);
 
-// Delete Blog
-router.delete("/:id", deleteBlog);
+router.delete("/:id", protect, deleteBlog);
 
-// Update Blog
-router.put("/:id", updateBlog);
+router.put("/:id", protect, updateBlog);
 
 module.exports = router;
