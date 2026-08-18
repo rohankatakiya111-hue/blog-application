@@ -1,6 +1,12 @@
+const API_URL = "https://blogverse-backend-zr0p.onrender.com";
+
+// ==========================================
+// REGISTER USER
+// ==========================================
+
 async function registerUser(name, email, password) {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
+    const response = await fetch(`${API_URL}/api/auth/register`, {
       method: "POST",
 
       headers: {
@@ -30,9 +36,13 @@ async function registerUser(name, email, password) {
   }
 }
 
+// ==========================================
+// LOGIN USER
+// ==========================================
+
 async function loginUser(email, password) {
   try {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
 
       headers: {
@@ -47,10 +57,18 @@ async function loginUser(email, password) {
 
     const data = await response.json();
 
+    console.log("Login Response:", data);
+
     if (response.ok) {
       alert("Login successful!");
 
+      // Save user information
       localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Save JWT token
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
 
       window.location.href = "dashboard.html";
     } else {
@@ -63,13 +81,21 @@ async function loginUser(email, password) {
   }
 }
 
+// ==========================================
+// CREATE BLOG
+// ==========================================
+
 async function createBlog(title, content, author) {
   try {
-    const response = await fetch("http://localhost:5000/api/blogs", {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/api/blogs`, {
       method: "POST",
 
       headers: {
         "Content-Type": "application/json",
+
+        Authorization: `Bearer ${token}`,
       },
 
       body: JSON.stringify({
@@ -89,7 +115,7 @@ async function createBlog(title, content, author) {
       alert(data.message || "Blog create failed!");
     }
   } catch (error) {
-    console.error("Blog Error:", error);
+    console.error("Create Blog Error:", error);
 
     alert("Server sathe connect thai shakyu nahi!");
   }

@@ -112,10 +112,10 @@
       }
 
       // ==========================================
-      // API URL
+      // LIVE API URL
       // ==========================================
 
-      const API_URL = "http://localhost:5000/api/blogs";
+      const API_URL = "https://blogverse-backend-zr0p.onrender.com/api/blogs";
 
       // ==========================================
       // LOAD BLOGS
@@ -136,6 +136,7 @@
           if (!response.ok) {
             if (response.status === 401) {
               localStorage.removeItem("token");
+
               localStorage.removeItem("user");
 
               alert("Session expired. Please login again.");
@@ -151,7 +152,9 @@
 
                 <h3>Unable to load blogs</h3>
 
-                <p>Blogs load nahi thai shakya.</p>
+                <p>
+                  Blogs load nahi thai shakya.
+                </p>
               </div>
             `;
 
@@ -165,7 +168,9 @@
 
                 <h3>No Blogs Yet</h3>
 
-                <p>Haju koi blog available nathi.</p>
+                <p>
+                  Haju koi blog available nathi.
+                </p>
 
                 <a
                   href="create-blog.html"
@@ -189,72 +194,72 @@
             const date = new Date(blog.createdAt).toLocaleDateString();
 
             blogCard.innerHTML = `
-              <div class="blog-card-top">
-                <span class="blog-badge">
-                  Published
-                </span>
+                <div class="blog-card-top">
+                  <span class="blog-badge">
+                    Published
+                  </span>
 
-                <span class="blog-date">
-                  ${date}
-                </span>
-              </div>
-
-              <a
-                href="blog-details.html?id=${blog._id}"
-                class="blog-view-link"
-              >
-                <h3>
-                  ${escapeHtml(blog.title)}
-                </h3>
-              </a>
-
-              <p class="blog-content">
-                ${escapeHtml(blog.content)}
-              </p>
-
-              <div class="blog-author">
-                <div class="author-avatar">
-                  ${escapeHtml(blog.author.charAt(0).toUpperCase())}
+                  <span class="blog-date">
+                    ${date}
+                  </span>
                 </div>
 
-                <div>
-                  <small>Written by</small>
+                <a
+                  href="blog-details.html?id=${blog._id}"
+                  class="blog-view-link"
+                >
+                  <h3>
+                    ${escapeHtml(blog.title)}
+                  </h3>
+                </a>
 
-                  <strong>
-                    ${escapeHtml(blog.author)}
-                  </strong>
+                <p class="blog-content">
+                  ${escapeHtml(blog.content)}
+                </p>
+
+                <div class="blog-author">
+                  <div class="author-avatar">
+                    ${escapeHtml(blog.author.charAt(0).toUpperCase())}
+                  </div>
+
+                  <div>
+                    <small>Written by</small>
+
+                    <strong>
+                      ${escapeHtml(blog.author)}
+                    </strong>
+                  </div>
                 </div>
-              </div>
 
-              <a
-                href="blog-details.html?id=${blog._id}"
-                class="view-blog-btn"
-              >
-                📖 Read Full Blog
-              </a>
-
-              <div class="blog-actions">
-                <button
-                  class="btn edit-btn"
-                  onclick="editBlog(
-                    '${escapeText(blog._id)}',
-                    '${escapeText(blog.title)}',
-                    '${escapeText(blog.content)}'
-                  )"
+                <a
+                  href="blog-details.html?id=${blog._id}"
+                  class="view-blog-btn"
                 >
-                  ✏️ Edit
-                </button>
+                  📖 Read Full Blog
+                </a>
 
-                <button
-                  class="btn delete-btn"
-                  onclick="deleteBlog(
-                    '${escapeText(blog._id)}'
-                  )"
-                >
-                  🗑️ Delete
-                </button>
-              </div>
-            `;
+                <div class="blog-actions">
+                  <button
+                    class="btn edit-btn"
+                    onclick="editBlog(
+                      '${escapeText(blog._id)}',
+                      '${escapeText(blog.title)}',
+                      '${escapeText(blog.content)}'
+                    )"
+                  >
+                    ✏️ Edit
+                  </button>
+
+                  <button
+                    class="btn delete-btn"
+                    onclick="deleteBlog(
+                      '${escapeText(blog._id)}'
+                    )"
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
+              `;
 
             blogGrid.appendChild(blogCard);
           });
